@@ -5,12 +5,14 @@ import java.util.List;
 
 public class DepthFirstSolver implements Solver {
 
+    private static final int[] ROW_DIRECTIONS = {-1, 1, 0, 0}; // Up, Down
+    private static final int[] COL_DIRECTIONS = {0, 0, -1, 1}; // Left, Right
+
     @Override
     public List<Coordinate> solve(Maze maze, Coordinate start, Coordinate end) {
         Cell[][] grid = maze.getGrid();
 
         List<Coordinate> path = new ArrayList<>();
-
         boolean[][] visited = new boolean[maze.getHeight()][maze.getWidth()];
 
         if (dfs(grid, visited, start.row(), start.col(), end.row(), end.col(), path)) {
@@ -32,24 +34,14 @@ public class DepthFirstSolver implements Solver {
 
         visited[row][col] = true;
 
-        if (dfs(grid, visited, row - 1, col, endRow, endCol, path)) { // Up
-            path.add(new Coordinate(row, col));
-            return true;
-        }
+        for (int i = 0; i < ROW_DIRECTIONS.length; i++) {
+            int newRow = row + ROW_DIRECTIONS[i];
+            int newCol = col + COL_DIRECTIONS[i];
 
-        if (dfs(grid, visited, row + 1, col, endRow, endCol, path)) { // Down
-            path.add(new Coordinate(row, col));
-            return true;
-        }
-
-        if (dfs(grid, visited, row, col - 1, endRow, endCol, path)) { // Left
-            path.add(new Coordinate(row, col));
-            return true;
-        }
-
-        if (dfs(grid, visited, row, col + 1, endRow, endCol, path)) { // Right
-            path.add(new Coordinate(row, col));
-            return true;
+            if (isValidCell(grid, visited, newRow, newCol) && dfs(grid, visited, newRow, newCol, endRow, endCol, path)) {
+                path.add(new Coordinate(row, col));
+                return true;
+            }
         }
 
         return false;
