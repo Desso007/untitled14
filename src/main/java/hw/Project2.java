@@ -8,8 +8,13 @@ public interface Project2 {
     Maze generate(int height, int width);
 }
 
-record Cell(int row, int col, Type type) {
+record Cell(int row, int col, Type type, char value) {
     public enum Type { WALL, PASSAGE }
+
+    // Конструктор без указания значения символа
+    public Cell(int row, int col, Type type) {
+        this(row, col, type, type == Type.WALL ? '#' : '.');
+    }
 }
 
 class Main {
