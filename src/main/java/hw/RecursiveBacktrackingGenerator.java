@@ -27,29 +27,29 @@ public class RecursiveBacktrackingGenerator implements Project2 {
         grid[row][col] = new Cell(row, col, Cell.Type.PASSAGE);
 
         // Get random directions
-        List<Direction> directions = new ArrayList<>();
-        directions.add(Direction.UP);
-        directions.add(Direction.DOWN);
-        directions.add(Direction.LEFT);
-        directions.add(Direction.RIGHT);
+        List<Integer> directions = new ArrayList<>();
+        directions.add(0); // UP
+        directions.add(1); // DOWN
+        directions.add(2); // LEFT
+        directions.add(3); // RIGHT
         Random random = new Random();
 
         // Shuffle the directions randomly
         for (int i = 0; i < 4; i++) {
             int j = random.nextInt(4);
-            Direction temp = directions.get(i);
+            int temp = directions.get(i);
             directions.set(i, directions.get(j));
             directions.set(j, temp);
         }
 
         // Explore each direction recursively
-        for (Direction direction : directions) {
-            int newRow = row + direction.getRowOffset();
-            int newCol = col + direction.getColOffset();
+        for (int direction : directions) {
+            int newRow = row + rowOffsets[direction];
+            int newCol = col + colOffsets[direction];
 
             if (isValidCell(grid, newRow, newCol) && grid[newRow][newCol].type() == Cell.Type.WALL) {
-                int wallRow = row + direction.getRowOffset() / 2;
-                int wallCol = col + direction.getColOffset() / 2;
+                int wallRow = row + rowOffsets[direction] / 2;
+                int wallCol = col + colOffsets[direction] / 2;
 
                 grid[wallRow][wallCol] = new Cell(wallRow, wallCol, Cell.Type.PASSAGE);
 
@@ -62,26 +62,7 @@ public class RecursiveBacktrackingGenerator implements Project2 {
         return row >= 0 && row < grid.length && col >= 0 && col < grid[0].length;
     }
 
-    private enum Direction {
-        UP(-1, 0),
-        DOWN(1, 0),
-        LEFT(0, -1),
-        RIGHT(0, 1);
-
-        private final int rowOffset;
-        private final int colOffset;
-
-        Direction(int rowOffset, int colOffset) {
-            this.rowOffset = rowOffset;
-            this.colOffset = colOffset;
-        }
-
-        public int getRowOffset() {
-            return rowOffset;
-        }
-
-        public int getColOffset() {
-            return colOffset;
-        }
-    }
+    // Offsets for UP, DOWN, LEFT, RIGHT
+    private final int[] rowOffsets = {-1, 1, 0, 0};
+    private final int[] colOffsets = {0, 0, -1, 1};
 }
